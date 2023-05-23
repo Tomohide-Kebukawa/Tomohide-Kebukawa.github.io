@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>光オルゴール用楽譜作成</title>
+
+<!------------------------------------------------------------------------------------ メインプログラム ------------------------------------------------------------------------------------>
+<script type="text/javascript">
+
+	// マップ（音符）で使う色を定義
+//	const color_on = 'black'; //顔料系プリンターのときは黒で印刷可能
+	const color_on = 'gray';
+	const color_off = 'none';
+//	const color_stroke = '#95B3D7';
+	const color_stroke = '#b0e0e6';
+
+	// マップ定義
+	const cell_w		= 19; //セルの幅
+	const cell_h		= 11; //セルの高さ
+	const map_w	= cell_w*15; //マップの幅
+	const map_m	= [260, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]; // ヘッダーの大きさ
+	const map_r		= [8*8, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10, 8*10]; // 行の数
+	const map_max	= 20; // 最大用意できるマップの数
+	var map_n	= 2; // マップの数
+
+	drawScore = function() {
+		for (  var column = 0;  column < 15;  column++  ) {
+			// 編集用ヘッダ
+//			document.getElementById('soundMapHeader').setAttribute('height',cell_w);
+			document.getElementById('rectH'+column).setAttribute('height',cell_w);
+			document.getElementById('gH'+column).setAttribute('transform','translate('+(cell_w*column+cell_w)+',0),rotate(90)');
+		}
+		for (  var map= 0; map < map_n;  map++  ) {
+			drawScorePage(map);
+		};
+	}
+
+	drawScorePage = function(map) {
+			var svg = document.getElementById('soundMap'+map);
+			var svgNS = svg.namespaceURI;
+			svg.setAttribute('width',map_w+2);
+			svg.setAttribute('height',cell_h*map_r[map]+map_m[map]+2);
+			// マップのノリシロ（備考欄）
+			var group = document.createElementNS(svgNS,'g');
+			if (map == 0){ group.setAttribute('class','display');}
+			svg.appendChild(group);
+			var polygon = document.createElementNS(svgNS,'polygon');
+			polygon.setAttribute('stroke','black');
+			polygon.setAttribute('fill','none');
+			polygon.setAttribute('stroke-width','1');
+			polygon.setAttribute('points','1 1 1 80 '+map_w+' 80 '+map_w+' 1');
+			polygon.setAttribute('transform','translate(0,'+(map_m[map]-85)+')');
+			group.appendChild(polygon);
+			var text = document.createElementNS(svgNS,'text');
+			var name = 'map'+map+'text';
+			text.setAttribute('id',name);
+			text.setAttribute('x',110);
+			text.setAttribute('y',map_m[map]-35);
+			text.setAttribute('font-size','20px');
+			text.textContent = (map+1)+'枚目';
+			group.appendChild(text);
+			// セル部分の描画
+			for (  var row= 0;  row < map_r[map];  row++  ) {
+				if( (row%8) == 7 ){
+					var line = document.createElementNS(svgNS,'line');
+					line.setAttribute('x1',1);
+					line.setAttribute('y1',row*cell_h+cell_h+map_m[map]);
+					line.setAttribute('x2',cell_w*15);
+					line.setAttribute('y2',row*cell_h+cell_h+map_m[map]);
+					line.setAttribute('stroke',color_stroke);
+					line.setAttribute('stroke-width',3);
+					svg.appendChild(line);
+				}
+				var rect = document.createElementNS(svgNS,'rect');
+				rect.setAttribute('id','map'+map+'rect_p'+row);
+				rect.setAttribute('pointer-events','fill');
+				rect.setAttribute('onmouseenter','playRow('+map+','+row+');');
+				rect.setAttribute('onmouseleave','stopRow('+map+','+row+');');
+				rect.setAttribute('x',1);
+				rect.setAttribute('y',row*cell_h+map_m[map]);
+				rect.setAttribute('width',cell_w*15);
+				rect.setAttribute('height',cell_h);
+				rect.setAttribute('fill','none');
+				rect.setAttribute('stroke',color_stroke);
+				svg.appendChild(rect);
+				for (  var column = 0;  column < 14;  column++  ) {
+					var rect = document.createElementNS(svgNS,'rect');
+					var name = 'map'+map+'rect'+row+'x'+column
+					rect.setAttribute('id',name);
+					rect.setAttribute('pointer-events','fill');
+//					rect.setAttribute('click','soundMapSet("'+name+'");');
+//					rect.setAttribute('onmousedown','soundMapSet("'+name+'");');
+//					rect.setAttribute('onmousemove','soundMapSet("'+name+'");');
+					rect.setAttribute('x',column*cell_w+1);
+					rect.setAttribute('y',row*cell_h+map_m[map]);
+					rect.setAttribute('width',cell_w);
+					rect.setAttribute('height',cell_h);
+					rect.setAttribute('fill','none');
+					rect.setAttribute('stroke',color_stroke);
+					svg.appendChild(rect);
+				};
+			};
+	};
+
+	// マウスボタンのイベントに対して関数を定義しておく
+	var mousebutton = 0; //グローバル変数（もっと良い方法があるかもね…）
+	document.addEventListener("click" , function(e){
+		var name = document.elementFromPoint(e.clientX, e.clientY).getAttribute('id');
+		if(!name) return; // nullのときは処理中断
+		if(name.match(/^map[0-9]+rect[0-9]+x[0-9]+/)){
+			soundMapSet(name,e);
+		}
+		// ファイルの保存
+		if(name == 'saveData'){
+			downloadData(name);
+		}
+		// ファイルの読み込み
+		if(name == 'loadData'){
+			loadData(name);
+		}
+	});
+	document.addEventListener("mousedown" , function(e){
+		mousebutton = 1;
+		var name = document.elementFromPoint(e.clientX, e.clientY).getAttribute('id');
+		if(!name) return; // nullのときは処理中断
+		if(name.match(/^map[0-9]+rect[0-9]+x[0-9]+/)){
+			soundMapSet(name,e);
+		}
+	});
+	document.addEventListener("mouseup" , function(e){
+		mousebutton = 0;
+		rect_fill = color_off;
+		rect_stroke = color_stroke;
+	});
+	document.addEventListener("mousemove" , function(e){
+		var name = document.elementFromPoint(e.clientX, e.clientY).getAttribute('id');
+		if(!name) return; // nullのときは処理中断
+		if(name.match(/^map[0-9]+rect[0-9]+x[0-9]+/)){
+			soundMapSet(name,e);
+		}
+	});
+
+	// マップに色を塗る
+	var rect_fill = color_off; //グローバル変数
+	var rect_stroke = color_stroke; //グローバル変数
+	soundMapSet = function(id,e) {
+		var rect = document.getElementById(id);
+		//  スタート地点の要素の色を反転して保持
+		if ((e.type == 'click') || (e.type == 'mousedown')){
+			if (rect.getAttribute('fill') == color_on ){
+				rect_fill = color_off;
+				rect_stroke = color_stroke;
+			}else{
+				rect_fill = color_on;
+				rect_stroke = color_on;
+			}
+		}
+		// 色を変更
+		if (mousebutton == 1){
+			rect.setAttribute('fill',rect_fill);
+			rect.setAttribute('stroke',rect_stroke);
+		}
+	};
+
+	// データをエンコーディングする
+	var base64Encode = function(bytes) {
+		var base64Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+		var bytesLength = bytes.length;
+		var encoded = '';
+		var paddingLength = 3 - bytesLength % 3;
+		if (paddingLength == 3) paddingLength = 0;
+		var rest = 0;
+		for (var i = 0; i < bytesLength; ++i) {
+			var shiftLength = (i % 3) * 2 + 2;
+			encoded += base64Characters.charAt((rest << (8 - shiftLength)) | (bytes.charCodeAt(i) >> shiftLength));
+			rest = bytes.charCodeAt(i) & (0xff >> (8 - shiftLength));
+			if (i % 3 == 2) {
+			encoded += base64Characters.charAt(rest);
+			rest = 0;
+			}
+		}
+		if (bytesLength % 3 != 0) encoded += base64Characters.charAt(rest << (paddingLength % 3 * 2));
+		for (var i = 0; i < paddingLength; ++i) encoded += '=';
+		return encoded;
+	};
+
+	// バイナリーデータを作成する
+	var bytesFromInt = function(value, bytes) {
+		if (value == undefined || bytes == undefined || isNaN(value) || value == Infinity) throw 'Invalid value: ' + value + ' or bytes: ' + bytes;
+		var intValue = Math.floor(value);
+		var result = '';
+		for (var i = 0; i < bytes; ++i) {
+			var byte = (intValue & (0xFF << (i * 8))) >> (i * 8);
+			result += String.fromCharCode(byte);
+		}
+		return result;
+	};
+
+	// 音を生成する
+	soundSet = function(soundName,waveFraction) {
+			var samplesPerSecond = 44100;
+			var channels = 2;
+			var bytesPerSample = 2;
+			var bytes = '';
+			var formatPartLength = 16;
+			var dataLength = samplesPerSecond * channels * bytesPerSample;
+			bytes += 'RIFF';
+			bytes += bytesFromInt(4 + 4 + 4 + formatPartLength + 4 + dataLength, 4);
+			bytes += 'WAVE';
+			bytes += 'fmt ';
+			bytes += bytesFromInt(formatPartLength, 4);
+			bytes += bytesFromInt(1, 2);
+			bytes += bytesFromInt(channels, 2);
+			bytes += bytesFromInt(samplesPerSecond, 4);
+			bytes += bytesFromInt(samplesPerSecond * bytesPerSample * 8 * channels, 4);
+			bytes += bytesFromInt(bytesPerSample * 8 * channels, 2);
+			bytes += bytesFromInt(bytesPerSample * 8, 2);
+			bytes += 'data';
+			bytes += bytesFromInt(dataLength, 4);
+			var vol = (220 / waveFraction) // 周波数で音量を調整
+			for (var sample = 0; sample < samplesPerSecond; ++sample) {
+				var value = Math.sin(Math.PI * 2 * sample / samplesPerSecond * waveFraction) * 32767 * vol;
+				for (var channel = 0; channel < channels; ++channel) {
+					bytes += bytesFromInt(value, 2);
+				}
+			}
+			// 音をドキュメント内に用意する
+			var audio = document.createElement('audio'); // div要素を生成
+			audio.id = soundName; // idを追加
+			audio.src = 'data:audio/wav;base64,' + base64Encode(bytes);
+			document.getElementById('sounds').appendChild(audio);
+	};
+
+	// 音を鳴らす
+	function playSound(soundName) {
+		document.getElementById(soundName).play();
+	};
+	// 音を止める
+	function stopSound(soundName) {
+		document.getElementById(soundName).pause();
+		document.getElementById(soundName).currentTime = 0;
+	};
+
+	//１行分の音を鳴らす
+	function playRow(map,pos) {
+		for (  var i = 0;  i < 13;  i++  ) {
+			var id1 = 'map'+map+'rect'+pos+'x'+i;
+			var id2 = 'map'+map+'rect'+pos+'x13'
+			var row = document.getElementById(id1);
+			if(document.getElementById(id1).getAttribute('fill') === color_on){
+				if(document.getElementById(id2).getAttribute('fill') === color_on){
+					i=i+12;
+				}
+				playSound(sound[i].name);
+				break;
+			}
+		};
+	};
+	//行の音を止める
+	function stopRow(map,pos) {
+		for (  var i = 0;  i < 13;  i++  ) {
+			var id1 = 'map'+map+'rect'+pos+'x'+i;
+			var id2 = 'map'+map+'rect'+pos+'x13'
+			var row = document.getElementById(id1);
+			if(row){
+				if(document.getElementById(id1).getAttribute('fill') === color_on){
+					if(document.getElementById(id2).getAttribute('fill') === color_on){
+						i=i+12;
+					}
+					stopSound(sound[i].name);
+					break;
+				}
+			}
+		};
+	};
+
+	// 音データを作成するためのパラメータを用意する
+	const sound = [
+		{"keyboard":57,"frequency": 220.000,"name": "A2"},
+		{"keyboard":58,"frequency": 233.082,"name": "A#2"},
+		{"keyboard":59,"frequency": 246.942,"name": "B2"},
+		{"keyboard":60,"frequency": 261.626,"name": "C3"},
+		{"keyboard":61,"frequency": 277.183,"name": "C#3"},
+		{"keyboard":62,"frequency": 293.665,"name": "D3"},
+		{"keyboard":63,"frequency": 311.127,"name": "D#3"},
+		{"keyboard":64,"frequency": 329.628,"name": "E3"},
+		{"keyboard":65,"frequency": 349.228,"name": "F3"},
+		{"keyboard":66,"frequency": 369.994,"name": "F#3"},
+		{"keyboard":67,"frequency": 391.995,"name": "G3"},
+		{"keyboard":68,"frequency": 415.305,"name": "G#3"},
+		{"keyboard":69,"frequency": 440.000,"name": "A3"},
+		{"keyboard":70,"frequency": 466.164,"name": "A#3"},
+		{"keyboard":71,"frequency": 493.883,"name": "B3"},
+		{"keyboard":72,"frequency": 523.251,"name": "C4"},
+		{"keyboard":73,"frequency": 554.365,"name": "C#4"},
+		{"keyboard":74,"frequency": 587.330,"name": "D4"},
+		{"keyboard":75,"frequency": 622.254,"name": "D#4"},
+		{"keyboard":76,"frequency": 659.255,"name": "E4"},
+		{"keyboard":77,"frequency": 698.456,"name": "F4"},
+		{"keyboard":78,"frequency": 739.989,"name": "F#4"},
+		{"keyboard":79,"frequency": 783.991,"name": "G4"},
+		{"keyboard":80,"frequency": 830.609,"name": "G#4"},
+		{"keyboard":81,"frequency": 880.000,"name": "A4"},
+		{"keyboard":82,"frequency": 932.328,"name": "A#4"},
+		{"keyboard":83,"frequency": 987.767,"name": "B4"}
+	];
+
+	// 音データを作成する
+	function createSound() {
+		sound.forEach( function( value ) {
+			soundSet(value.name, value.frequency, 1);
+		});
+	};
+
+	// 楽譜データをファイルに保存する
+	function downloadData(id) {
+		// ファイル名を生成する
+		var filename = document.getElementById('title').value;
+		if (filename == ''){
+			filename = 'score.json'; // 曲名が入力されていないときのファイル名
+		}else{
+			filename += '.json'; // 曲名が設定されているときは曲名に拡張子をつけてファイル名にする
+		}
+		// ファイルのタイプ
+		var blobType = 'text/plain';
+		// 楽譜データをJSON配列に入れる
+		var score = [];
+		for (  var map= 0; map < map_n;  map++  ) {
+			var svg = document.getElementById('soundMap'+map);
+			var svgNS = svg.namespaceURI;
+			for (  var row= 0;  row < map_r[map];  row++  ) {
+				for (  var column = 0;  column < 14;  column++  ) {
+					var name = 'map'+map+'rect'+row+'x'+column
+					var rect = document.getElementById(name);
+					if (rect.getAttribute('fill') != color_off){
+						score.push(name);
+					}
+				};
+			};
+		};
+		// 曲名と名前を記録
+		var data = {
+			'name' : document.getElementById('name').value,
+			'title' : document.getElementById('title').value,
+			'score' : score
+		};
+		var string = JSON.stringify(data);
+		// 保存のためのリンクを生成してスクリプトでクリックしてファイルに保存
+		var elem = document.createElement('a')
+		var stringObject = new Blob([string], { type: blobType });
+		var objectURL = window.URL.createObjectURL(stringObject);   
+		elem.setAttribute('href',objectURL);
+		elem.setAttribute('download',filename); 
+		elem.click();
+		alert(filename+"を保存しました");
+	};
+
+	// 保存されたデータを楽譜に復元する
+	function restoreData(jsonString) {
+		var data = JSON.parse(jsonString);
+		document.getElementById('score_name').textContent = data.name;
+		document.getElementById('score_title').textContent = data.title;
+		document.getElementById('name').value = data.name;
+		document.getElementById('title').value = data.title;
+		data.score.forEach(function( item ) {
+			// item map0rect3x4
+			var result = item.match(/^map([0-9]+)rect/);
+			if(result[1] >= map_n){
+				for (  var i = map_n;  i <= result[1];  i++  ) {
+					addScorePage(i);
+				}
+			}
+			var rect = document.getElementById(item);
+			if (rect){
+				rect.setAttribute('fill',color_on);
+				rect.setAttribute('stroke',color_on);
+			}
+		});
+	}
+
+	// 楽譜ページを１枚増やす
+	addScorePage = function(){
+		if(map_n < map_max){
+			drawScorePage(map_n);
+			map_n++;
+		}else{
+			alert('これ以上ページを増やすことはできません');
+		}
+	}
+
+
+
+</script>
+
+<!------------------------------------------------------------------------------------ 画面のデザイン ------------------------------------------------------------------------------------>
+<style type="text/css">
+
+h1 {
+	margin: 50px;
+	text-align:center;
+}
+
+header, footer  {
+	margin: 5px 30px;
+	padding: 0;
+}
+footer {
+	text-align:right;
+}
+
+.note  {
+    top: 700px;
+	margin: 450px auto 0 auto;
+	padding: 0;
+	max-width: 600px;
+}
+
+nav {
+	margin: 30px auto 10px auto;
+	padding: 15px;
+	width: 350px;
+	border: solid #5f9ea0;
+	border-radius: 5px;
+	background-color: #e0ffff;
+}
+nav p {
+	margin: 5px 0 0 0;
+	font-size: 10px;
+	text-align:right;
+}
+.bottons {
+	margin: 0 0 15px 0;	
+}
+
+article, .score  {
+	border: solid #5f9ea0;
+	border-radius: 5px;
+}
+article {
+	margin: 30px auto;
+	padding: 10px;
+}
+
+p, li {
+	line-height: 2;
+}
+
+svg {
+	margin: 0;
+}
+.score{
+/*	position: absolute;
+	position: fixd;
+	position: relative;
+	top: 0;
+	right: 0;
+	bottom: 70px; */
+
+	position: absolute;
+	transform-origin: left top;
+	transform: rotate( -90deg ) translate(-380px,0);
+	height: calc(100vw - 50px);
+	margin: auto;
+	width: 315px;
+	padding: 5px;
+}
+.score_header{
+	height: 70px;
+}
+.score_body{
+	position: absolute;
+	top: 75px;
+	right: 0;
+	bottom: 0;
+	left: 5px;
+	overflow: hidden auto;
+}
+.score_footer{
+		margin: 10px 0 65vh 0;
+}
+
+/* 印刷用のデザイン */
+@media print{
+	.header, .note, .footer, .score_header, .score_footer, .nav {display: none;}
+	body {
+		margin: 0;
+		padding: 0;
+	}
+	.score {
+		transform: unset;
+		margin: 0;
+		padding: 0;
+		border: none;
+		width: 100%;
+	}
+	.score_body{
+		position: static;
+		margin: 0 auto;
+		padding: 0;
+		height: auto;
+		width: 625px;
+	}
+	.score{
+		width: auto;
+		transform: none;
+	}
+	svg {
+		margin: 2px;
+	}
+}
+
+</style>
+
+</head>
+
+<!------------------------------------------------------------------------------------ 画面 ------------------------------------------------------------------------------------>
+<body>
+
+<header id="header" class="header">
+<h1>光オルゴール用楽譜テープ作成支援</h1>
+<div id="sounds">
+<audio><p>このブラウザでは音は出ません。</p></audio>
+</div>
+</header>
+
+<nav class="nav">
+<div class="bottons">
+<input type="button" value="印刷" onclick="window.print();" />
+<input type="button" value="保存" id="saveData"/>
+<input type="file" id="selectDataFile" name="files"/>
+</div>
+<div>曲名：<input type="text" size="50" id="title" name="title"/></div>
+<div>名前：<input type="text" size="50" id="name" name="name"/></div>
+<p>使い方は下の方に書いてあります</p>
+</nav>
+
+
+<section class="score">
+<div class="score_header">
+<!--<input type="checkbox" id="scrole_play">スクロールで音を鳴らす</input>-->
+<svg id="soundMapHeader" width="302"  height="72" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'>
+    <style>
+		rect:hover{fill:pink;}
+    </style>
+	<g id="gH0"><rect id="rectH0" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('A2');"		onmouseleave="stopSound('A2');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ラ</text></g>
+	<g id="gH1"><rect id="rectH1" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('A#2');"	onmouseleave="stopSound('A#2');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ラ♯,シ♭</text></g>
+	<g id="gH2"><rect id="rectH2" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('B2');"		onmouseleave="stopSound('B2');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">シ</text></g>
+	<g id="gH3"><rect id="rectH3" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('C3');"		onmouseleave="stopSound('C3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ド</text></g>
+	<g id="gH4"><rect id="rectH4" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('C#3');"	onmouseleave="stopSound('C#3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ド♯,レ♭</text></g>
+	<g id="gH5"><rect id="rectH5" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('D3');"		onmouseleave="stopSound('D3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">レ</text></g>
+	<g id="gH6"><rect id="rectH6" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('D#3');"	onmouseleave="stopSound('D#3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">レ♯,ミ♭</text></g>
+	<g id="gH7"><rect id="rectH7" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('E3');"		onmouseleave="stopSound('E3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ミ</text></g>
+	<g id="gH8"><rect id="rectH8" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('F3');"		onmouseleave="stopSound('F3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ファ</text></g>
+	<g id="gH9"><rect id="rectH9" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('F#3');"	onmouseleave="stopSound('F#3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ファ♯,ソ♭</text></g>
+	<g id="gH10"><rect id="rectH10" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('G3');"		onmouseleave="stopSound('G3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ソ</text></g>
+	<g id="gH11"><rect id="rectH11" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('G#3');"	onmouseleave="stopSound('G#3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ソ♯,ラ♭</text></g>
+	<g id="gH12"><rect id="rectH12" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1" pointer-events="fill" onmouseenter="playSound('A3');"		onmouseleave="stopSound('A3');"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">ラ</text></g>
+	<g id="gH13"><rect id="rectH13" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">オクト</text></g>
+	<g id="gH14"><rect id="rectH14" x="1" y="-1" width="70" fill="none" stroke="black" stroke-width="1"/><text x="7" y="13" font-size="12" stroke="red" pointer-events="none">P</text></g>
+</svg>
+</div>
+
+<div class="score_body" id="score_body">
+<svg id="soundMap0" width="302" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'>
+<defs>
+    <style>
+        rect:hover{fill:pink;}
+        .printableItem{display:none;}
+        @media print {
+            .display{display:none;}
+            .printableItem{display:inherit;}
+        }
+    </style>
+</defs>
+<g class="printableItem">
+	<polygon stroke="black" fill="none" stroke-width="1" points="50 1 1 50 1 255 286 255 286 50 236 1"/>
+	<rect x="10" y="080" width="270" height="50" stroke="black" fill="none"/>
+	<rect x="10" y="160" width="270" height="50" stroke="black" fill="none"/>
+	<text x="15" y="95" font-size="12px">曲名</text>
+	<text x="15" y="174" font-size="12px">なまえ</text>
+	<text x="25" y="120" font-size="16px" id="score_title"></text>
+	<text x="40" y="200" font-size="20px" id="score_name"></text>
+ </g>
+</svg>
+<svg id="soundMap1" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap2" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap3" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap4" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap5" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap6" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap7" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap8" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap9" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap10" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap11" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap12" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap13" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap14" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap15" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap16" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap17" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap18" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<svg id="soundMap19" width="0" height="0" xmlns="http://www.w3.org/2000/svg" xlink:href='https://www.google.co.jp/'><defs><style>rect:hover{fill:pink;}</style></defs></svg>
+<div class="score_footer">
+<a class="addpage" onclick="addScorePage()">
+<svg viewBox="0 0 302 50" width="302" height="50" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<style>
+#addbutton:hover{fill:paleturquoise;}
+#addbutton:active {fill:gray;}
+</style>
+</defs>
+<g transform='translate(125,0)'>
+<circle id="addbutton" fill="lightblue" cx="25" cy="25" r="25"/>
+<polygon id="addbuttonplus" fill="white"  points="20 5 20 20 5 20 5 30 20 30 20 45 30 45 30 30 45 30 45 20 30 20 30 5 20 5"/>
+</g>
+</svg>
+</a>
+</div>
+</div>
+</section>
+
+
+<section class="note">
+<h2>説明</h2>
+
+<article>
+<h3><ruby><rb>注意事項</rb><rp>（</rp> <rt>ちゅういじこう</rt><rp>）</rp></ruby></h3>
+<p>このプログラムはHTMLと呼ばれるコンピューター<ruby><rb>言語</rb><rp>（</rp> <rt>げんご</rt><rp>）</rp></ruby>で書かれた１つのファイルでできています。</p>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/HyperText_Markup_Language" target="_new">HTMLについて（ウィキペディア）</a></li>
+</ul>
+<p>ファイルはブラウザで読み込んでブラウザ上で動作します。
+このプログラムが正しく動くブラウザは、次のブラウザになります。</p>
+<ul>
+<li><a href="https://www.google.co.jp/chrome/" target="_new">Google Chrome</a></li>
+<li><a href="https://www.mozilla.org/ja/firefox/new/" target="_new">Firefox</a></li>
+</ul>
+<p>とりあえず次のブラウザでも動きますが、サイズが正しく印刷できませんので、<ruby><rb>拡大</rb><rp>（</rp> <rt>かくだい</rt><rp>）</rp></ruby>もしくは<ruby><rb>縮小</rb><rp>（</rp> <rt>しゅくしょう</rt><rp>）</rp></ruby>の<ruby><rb>調整</rb><rp>（</rp> <rt>ちょうせい</rt><rp>）</rp></ruby>をしてください。</p>
+<ul>
+<li>Edge</li>
+<li><a href="https://www.apple.com/jp/safari/" target="_new">Safari</a></li>
+</ul>
+<p>書いた<ruby><rb>楽譜</rb><rp>（</rp> <rt>がくふ</rt><rp>）</rp></ruby>は保存ボタンを押して保存してください。
+他の方法では楽譜を保存することはできませんので注意してください。</p>
+</article>
+
+<article>
+<h3><ruby><rb>使い方</rb><rp>（</rp> <rt>つかいかた</rt><rp>）</rp></ruby></h3>
+<p>すでにここを読んでいる人は、すでにブラウザでファイルを開いていると思います。
+ですが、ファイルを読み込むところから作業の流れを追って<ruby><rb>箇条書き</rb><rp>（</rp> <rt>かじょうがき</rt><rp>）</rp></ruby>で説明します。</p>
+<ol>
+<li>ブラウザを使い、このファイルを開きます</li>
+<lI>空の楽譜が表示されます</li>
+<lI>楽譜の上でマウスボタンを押すと押した場所の色が<ruby><rb>反転</rb><rp>（</rp> <rt>はんてん</rt><rp>）</rp></ruby>して書き込んだり消したりできます</li>
+<lI>楽譜のPと書かれた列の上にマウスカーソルを置くと、置いた行の音が鳴るので、書いた楽譜の音を耳で聞いて確認できます</li>
+<lI>楽譜のページが足りないときはページの最後にある＋ボタンを押すと１ページ増えます</li>
+<lI>ページは20ページまで増やせます</li>
+<lI>楽譜が完成したら、保存ボタンを押して楽譜ファイルを保存します</li>
+<lI>楽譜を印刷するときは、印刷ボタンを押すと楽譜だけが印刷されます</li>
+</ol>
+<p>保存した楽譜ファイルは、ファイル選択ボタンを押して読み込むことができます。
+ファイルに保存した楽譜が最後の方に空白のページがあるときは、次にファイルを読み込んだときに最後の方の不要な空白のページは無くなります。<p>
+<p>楽譜をクリアするには、このプログラムファイルを再読み込みしてください。</p>
+</article>
+
+<article>
+<h3><ruby><rb>参考記事</rb><rp>（</rp> <rt>さんこうきじ</rt><rp>）</rp></ruby></h3>
+<p>このプログラムを作成するために、参考にさせていただいた記事は、次のとおりです。</p>
+<ul>
+<li><a href="http://nyamtech.blogspot.com/2012/11/javascript.html" target="_new">JavaScriptで音を作る</a></li>
+<li><a href="https://composer-instruments.com/scale-and-frequency/" target="_new">音階と周波数の関係（平均律一覧表）</a></li>
+</ul>
+</article>
+
+<article>
+<h3>音が鳴らないとき</h3>
+<audio><p>残念なことに、このブラウザでは音を鳴らすことはできません。</p></audio>
+<p>ブラウザによっては、不用意に音が鳴り出したりしないように工夫されています。
+一度も利用者が何かをした様子がないようなときは、音がいきなり鳴り出すようなことはありません。
+そのためマウスの移動だけで音が鳴らないときは、マウスボタンでブラウザをクリックしてください。
+その後は、音が鳴るはずです。</p>
+</article>
+
+<article>
+<h3>その他</h3>
+<p>自由に配ったり、プログラムを書き換えてご利用ください。</p>
+<p>著作権表示がありますが、これはプログラムを作成するにあたり、他の著作権者に対しての都合で表示しています。
+配布や改造を行うことについて何ら制限をするものではありませんが、前述の引用記事の出典についてはご配慮されますようお願いします。</p>
+</article>
+
+<section>
+
+<footer class="footer">
+© 2019 癸生川知秀
+</footer>
+
+<script><!-- HTMLがレンダリングされてから実行するスクリプト -->
+
+	window.onload = function() {
+		drawScore();
+		createSound();
+	}
+
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		// File API が実装されているので問題なし 
+	} else {
+		alert('このブラウザでは保存したデータを読み込むことができないかもしれません.');
+	}
+
+	// 保存したデータを読み込む
+	function handleFileSelect(e) {
+		var files = e.target.files; // FileList object
+		var reader = new FileReader();
+    	reader.onload = function(e) {
+			restoreData(reader.result);
+			alert(files[0].name+"を読み込みました");
+		}
+		reader.readAsText(files[0]);
+	}
+	document.getElementById('selectDataFile').addEventListener('change', handleFileSelect, false); //値が変化したとき
+
+	function handleDataInput() {
+		document.getElementById('score_name').textContent = document.getElementById('name').value;
+		document.getElementById('score_title').textContent = document.getElementById('title').value;
+	}
+	document.getElementById('name').addEventListener('change', handleDataInput, false); //値が変化したとき
+	document.getElementById('title').addEventListener('change', handleDataInput, false); //値が変化したとき
+
+	// 編集エリアのスクロール
+	var box = document.getElementById( 'score_body' );
+	var lastElement = box.appendChild( document.createElement( 'div' ) );
+	var last_row;
+	box.onscroll = function(){
+		if(document.getElementById('scrole_play').checked){
+			var rect = this.getBoundingClientRect(); // スクロールしているオブジェクトの位置情報
+			var id = document.elementFromPoint(rect.x+map_w-1,rect.y+1).id;
+			if (id){
+				var m = id.match(/^map([0-9])+rect_p([0-9]+)/);
+				if(m){
+					if (last_row){
+						stopRow(last_row[1],last_row[2]);
+					}
+					playRow(m[1],m[2]);
+				}
+				last_row = m;
+			}
+		}
+	}
+
+
+
+</script>
+
+</body>
+
+</html>
