@@ -10,12 +10,14 @@ h1 {
 	font-size: 32px;
 }
 h1:before {
-	content: " ♾️ ";
+	content: "💫";
 	font-size: 38px;
+	padding: 24px;
 }
 h1:after {
-	content: " ♾️ ";
+	content: "💯";
 	font-size: 38px;
+	padding: 24px;
 }
 
 section {
