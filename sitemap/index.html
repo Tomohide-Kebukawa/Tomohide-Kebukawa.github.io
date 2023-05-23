@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Kebu's Laboratory : Github Actionsでサイトマップを作成するときのメモ</title>
+<link href="../css/main.css" rel="stylesheet">
+</head> 
+<body>
+
+<h1>Github Actionsでサイトマップを作成するときのメモ</h1>
+
+<section>
+<h2>sitemapの作成</h2>
+<p>
+sitemapは、Googleで検索される公開サイトには必須のものです。
+ですが、手作業で作成していると、つい更新がおろそかになり、Google Botが正しくクロールしてくれなくなります。
+</p>
+<p>
+GitHubには、GitHub Actionsという機能があるので、これを使えばページ更新（コミット）したときに自動でサイトマップを作れるに違いないと思いました。
+</p>
+<ul><li>参考資料：<a href="https://docs.github.com/ja/actions">GitHub Actionsのドキュメント</a></li></ul>
+<p>
+しかし、Github初心者にはゼロから作るには、ハードルが高すぎです。
+</p>
+<p>
+動作するサンプルコードがあれば、サイトマップの作成を例にして、GitHubアクションを学べるに違いないのです。
+一石二鳥というわけです。
+</p>
+<p>
+このような機能は、きっと優秀な先人たちが既に用意しているはずです。
+実際ネットを漁ると、色々と情報が出てきますが、そのまま使えるコードがなかなか見つかりません。
+</p>
+<p>
+色々なサイトからコードをコピーしては試してみましたが、なかなか動作しそうにありません。
+そんな中、Marketplaceにきちんと説明された、完璧な見本を発見しました。
+それが⇓これです！
+</p>
+<ul><li><a href="https://github.com/marketplace/actions/generate-sitemap">Marketplace / Actions / generate-sitemap</a></li></ul>
+<p>
+説明をみると、何かをインストールすることなく動作しそうです。
+</p>
+<p>
+ということで、上記のページで公開されている<a href="https://github.com/marketplace/actions/generate-sitemap#example-1-minimal-example">Example 1: Minimal Example</a>をそのまま配置してみました。
+</p>
+</section>
+
+<section>
+<h2>エラーが出た</h2>
+<p>
+実際コミットしてためしてみました。
+しかし、sitemap.xmlは生成されませんでした。
+これまで、他のコードでもうまく行かなかったので、驚きもしませんでしたが少しがっかりです。
+</p>
+<p>
+念のためActionsタグをクリックして、Actionsの履歴を確認しました。
+<img class="reference" src="actions_tag.png" />
+</p>
+<p>
+すると、エラーが出ていることが分かりました。
+<img class="reference" src="error.png" />
+</p>
+<p>
+これまでのコードとは感触の違うエラーです。
+内容を確認してみると…
+</p>
+<pre>
+	if [[ `git status --porcelain sitemap.xml` ]]; then
+		git config --global user.name 'github-actions'
+		git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+		git add sitemap.xml
+		git commit -m "Automated sitemap update" sitemap.xml
+		git push
+	fi
+shell: /usr/bin/bash -e {0}
+[main 43381b1] Automated sitemap update
+ 1 file changed, 7 insertions(+)
+ create mode 100644 sitemap.xml
+remote: Permission to Tomohide-Kebukawa/Tomohide-Kebukawa.github.io.git denied to github-actions[bot].
+fatal: unable to access 'https://github.com/Tomohide-Kebukawa/Tomohide-Kebukawa.github.io/': The requested URL returned error: 403
+Error: Process completed with exit code 128.
+</pre>
+<p>
+コード自体は正しく動作してXMLを生成できているようですが、git pushで失敗しているのが原因のようです。
+原因は、どうやらアクセス権にあるようです。
+アクションで書き換える権利が不足している可能性があります。
+</p>
+<p>
+Settingsタグを押し、さらに左端にあるActions / General のリンクを押して設定を確認すると、最後の方にあるWorkflow permissionsカテゴリにそれっぽい設定がありました。
+デフォルトでは「Read repository contents and packages permissions」オプションが有効にされていますが説明を読むと、このオプションではワークフローは読み取り権限しかありません。
+これだと、git pushで書き換えに失敗すると思います。
+</p>
+<p>
+ということで「Read and write permissions」オプションを有効にして、ワークフローに書き換えを許可することにします。
+</p>
+<p>
+そして実験してみると、エラーは解消されました。
+結果、sitemap.xmlは自動で生成されるようになりました。
+</p>
+<p>
+めでたし、めでたし&#x270c;
+</p>
+</section>
+</body>
+</html>
