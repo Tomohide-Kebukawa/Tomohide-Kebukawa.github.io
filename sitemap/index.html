@@ -75,7 +75,7 @@ GitHubには、GitHub Actionsという機能があるので、これを使えば
 </ul>
 </p>
 <p>
-簡単に言えば・・・
+これらを読み解くと…
 <ul>
 <li>GitHub Actionsのプログラムはワークフローとしてファイルを置くことで、イベントを受け取って動作する</li>
 <li>ファイルの拡張子は.yml</li>
@@ -152,6 +152,31 @@ Settingsタグを押し、さらに左端にあるActions / General のリンク
 <p>
 めでたし、めでたし&#x270c;
 </p>
+</section>
+
+<section>
+<h2>Google Search Consoleに登録</h2>
+<p>
+サイトマップが用意できたので、いよいよGoogle Search Consoleに登録に登録です。
+</p>
+<p>
+Google Search Consoleへの登録は、さほど難しいものではありませんが、URLの所有権の確認があります。
+検索できるようにするためには、所有権をGoogleに認めてもらう必要があります。
+手続きの主な流れは、次のとおりです。
+<ol>
+<li><a href="https://search.google.com/search-console/about?hl=ja">Google Search Console</a>サイトに行く</li>
+<li>Googleのアカウント情報を入力してGoogleにログイン</li>
+<li>URLの登録をURLプレフィックスで行う</li>
+<li>所有権確認を求められたら確認用のHTMLファイルをダウンロードをする<br />注：確認ページは表示したままにする</li>
+<li>ルートフォルダにファイルを入れてコミットする</li>
+<li>ブラウザで新しいウィンドウを開いて実際のサイトにて確認用HTMLファイルが表示できるか確認</li>
+<li>確認用HTMLファイルが表示できたなら、保留していたGoogleの確認ページに戻り「確認」ボタンを押す</li>
+</ol>
+このような作業を行うと、直ちにGoogle Botがサイトにある確認用ファイルをクロールしてきます。
+Google Botがファイルを無事にクロールすると、無事所有権が確認されたことになります。
+<p>
+<p>あとは寝て待つだけです &#x1f634;</p>
+<p>数日待てば、検索でリストアップされるようになるはずです。</p>
 </section>
 
 <footer>

@@ -9,8 +9,10 @@ header {
 
 footer {
 	margin: 20px 0 0 0;
+	padding: 12px;
 	border-top: 1px solid;
 	text-align: right;
+	color: #333;
 }
 footer::after {
 	content: "Kebu's Laboratory";
@@ -19,8 +21,8 @@ footer::after {
 h1 {
 	margin: 0;
 	padding: 24px;
-	background-color: #efe;
-	font-size: 32px;
+	background-image: linear-gradient(0, rgba(57, 210, 248, 1), rgba(55, 191, 222, 1) 75%, rgba(42, 175, 172, 1));
+  	font-size: 32px;
 }
 h1::before {
 	content: "💫";
