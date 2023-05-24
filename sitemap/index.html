@@ -13,6 +13,23 @@
 </header>
 
 <section>
+<h2>GitHubのページをGoogle検索でリストさせる</h2>
+<p>
+GitHubで公開したリポジトリを他の人に利用してもらうためには、やはりGoogleの検索結果に表示されないと不便です。
+URLを説明するよりも、確実に検索でヒットするキーワードを教えるほうが、ずっと楽だし、相手も簡単に覚えられるかです。
+しかし、ただ単にリポジトリを公開するだけでは、いつまでたっても検索結果にはでてきません。
+</p>
+<p>
+Googleの検索結果に表示されるようにするためには、Googleにリポジトリをクロールして貰う必要があります。
+そのためには、次のことをしなければなりません。
+<ol>
+<li>サイトマップを用意する</li>
+<li>Google Search Consoleに登録する</li>
+</ol>
+</p>
+</section>
+
+<section>
 <h2>sitemapの作成</h2>
 <p>
 sitemapは、Googleで検索される公開サイトには必須のものです。
@@ -48,6 +65,30 @@ GitHubには、GitHub Actionsという機能があるので、これを使えば
 </section>
 
 <section>
+<h2>GitHub Actionsの利用</h2>
+<p>
+見つけたサンプルコードは、どこに書けば良いのかまではgenerate-sitemapの説明では、はっきりと書かれていません。
+こういったところが初心者にはきついところだったりしますが、ヒントはあります。
+<ul>
+<li>GitHub Actionsの<a href="https://docs.github.com/ja/actions/learn-github-actions/understanding-github-actions#workflows">Workflowsの説明</a></li>
+<li>generate-sitemapのページの<a href="https://github.com/marketplace/actions/generate-sitemap#real-examples-from-projects-using-the-action">Real Examples From Projects Using the Action</a>で示されている実際のファイル<a href="https://github.com/cicirello/cicirello.github.io/blob/staging/.github/workflows/sitemap-generation.yml">sitemap-generation.yml</a></li>
+</ul>
+</p>
+<p>
+簡単に言えば・・・
+<ul>
+<li>GitHub Actionsのプログラムはワークフローとしてファイルを置くことで、イベントを受け取って動作する</li>
+<li>ファイルの拡張子は.yml</li>
+<li>ファイルの名前は何でも良い</li>
+<li>ファイルの置き場所は基本的にリポジトリ内の.github/workflowsディレクトリに置く</li>
+</p>
+<p>
+サイトマップを作成するワークフローのファイルを.github/workflowsディレクトリ内に置いて、あとはコミットをすればサイトマップができるはずです。
+ということで、早速実験しました。
+</p>
+</section>
+
+<section>
 <h2>エラーが出た</h2>
 <p>
 実際コミットしてためしてみました。
@@ -59,7 +100,7 @@ GitHubには、GitHub Actionsという機能があるので、これを使えば
 <img class="reference" src="actions_tag.png" />
 </p>
 <p>
-すると、エラーが出ていることが分かりました。
+すると、エラーが出ていました。
 <img class="reference" src="error.png" />
 </p>
 <p>
@@ -87,6 +128,10 @@ Error: Process completed with exit code 128.
 原因は、どうやらアクセス権にあるようです。
 アクションで書き換える権利が不足している可能性があります。
 </p>
+</section>
+
+<section>
+<h2>アクセス権の変更</h2>
 <p>
 Settingsタグを押し、さらに左端にあるActions / General のリンクを押して設定を確認すると、最後の方にあるWorkflow permissionsカテゴリにそれっぽい設定がありました。
 デフォルトでは「Read repository contents and packages permissions」オプションが有効にされていますが説明を読むと、このオプションではワークフローは読み取り権限しかありません。
@@ -95,13 +140,21 @@ Settingsタグを押し、さらに左端にあるActions / General のリンク
 <p>
 ということで「Read and write permissions」オプションを有効にして、ワークフローに書き換えを許可することにします。
 </p>
+</section>
+
+<section>
+<h2>生成されました</h2>
 <p>
-そして実験してみると、エラーは解消されました。
-結果、sitemap.xmlは自動で生成されるようになりました。
+アクセス権を変更したので、早速コンテンツの一部を書き換えて、コミットしてみました。
+今度はエラーは解消され、結果、sitemap.xmlは自動で生成されるようになりました。
+これでサイトマップの更新については手放しで、コンテンツの作成に没頭することができるようになりました。
 </p>
 <p>
 めでたし、めでたし&#x270c;
 </p>
 </section>
+
+<footer>
+</footer>
 </body>
 </html>

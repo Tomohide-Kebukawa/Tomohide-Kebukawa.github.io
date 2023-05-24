@@ -7,18 +7,27 @@ header {
 	text-align: center
 }
 
+footer {
+	margin: 20px 0 0 0;
+	border-top: 1px solid;
+	text-align: right;
+}
+footer::after {
+	content: "Kebu's Laboratory";
+}
+
 h1 {
 	margin: 0;
 	padding: 24px;
 	background-color: #efe;
 	font-size: 32px;
 }
-h1:before {
+h1::before {
 	content: "💫";
 	font-size: 38px;
 	padding: 24px;
 }
-h1:after {
+h1::after {
 	content: "💯";
 	font-size: 38px;
 	padding: 24px;
