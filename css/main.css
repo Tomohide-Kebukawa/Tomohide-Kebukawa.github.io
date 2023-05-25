@@ -27,7 +27,7 @@ article.index-page {
 
 section {
 	margin: 8px;
-	padding: 0px;
+	padding: 0 0 12px 0;
 	background-color: #eee;
 	border-radius: 5px;
 }
