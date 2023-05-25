@@ -28,7 +28,7 @@ article.index-page {
 section {
 	margin: 8px;
 	padding: 0px;
-	background-color: #ddd;
+	background-color: #eee;
 	border-radius: 5px;
 }
 article.index-page section {
@@ -57,7 +57,7 @@ h2 {
 	padding: 12px;
 }	
 section h2 {
-	background-color: #aaa;
+	background-color: #ddd;
 	border-radius: 5px 5px 0 0;
 }
 
