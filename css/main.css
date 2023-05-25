@@ -1,6 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
+	background-color: #fff;
 }
 
 header {
@@ -16,6 +17,22 @@ footer {
 }
 footer::after {
 	content: "Kebu's Laboratory";
+}
+
+article.index-page {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+section {
+	margin: 8px;
+	padding: 0px;
+	background-color: #ddd;
+	border-radius: 5px;
+}
+article.index-page section {
+	width: 400px;
 }
 
 h1 {
@@ -35,17 +52,32 @@ h1::after {
 	padding: 24px;
 }
 
-section {
-	margin: 8px;
-	padding: 8px;
-	background-color: #eee;
-	border-radius: 5px;
+h2 {
+	margin: 0;
+	padding: 12px;
+}	
+section h2 {
+	background-color: #aaa;
+	border-radius: 5px 5px 0 0;
 }
+
+
+p {
+	margin: 8px;
+	padding: 5px;
+}
+
+img.thumbnail {
+	margin: 8px;
+    clear: both;
+    float: right;
+ }
 img.reference {
 	margin: 5px auto 5px 5px;
 	display: block;
 }
 pre {
+	margin: 8px;
 	padding: 8px;
-	background-color: #ddd;
+	background-color: #eee;
 }
