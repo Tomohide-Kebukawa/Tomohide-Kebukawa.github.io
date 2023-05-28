@@ -16,7 +16,6 @@ jobs:
         fetch-depth: 0 
 
     - name: Generate the sitemap
-      uses: Tomohide-Kebukawa
       with:
         base-url-path: https://Tomohide-Kebukawa.github.io/
 
