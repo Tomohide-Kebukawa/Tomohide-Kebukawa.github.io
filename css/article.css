@@ -27,8 +27,9 @@ section {
 .language-plaintext {
 /* 	border: solid 1px gray;
     border-radius: 3px; */
-    padding: 3px;
-    margin: 2px;
+	padding: 3px;
+	margin: 2px;
+	font-size: inherit;
 }
    
 .highlighter-rouge {
