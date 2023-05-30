@@ -1,6 +1,12 @@
 h1 {
 }
 
+.article-title {
+	margin: 15px;
+	font-size: 20px;
+	font-weight: bold;
+}
+
 section h2 {
 	border-radius: 5px;
 }	
