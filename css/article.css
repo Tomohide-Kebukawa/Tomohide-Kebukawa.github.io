@@ -10,3 +10,14 @@ section {
 	background-color: unset;
 	border-radius: unset;
 }
+
+.language-plaintext {
+	border: solid 1px gray;
+    padding: 3px;
+    border-radius: 3px;
+    margin: 2px;
+}
+   
+.highlighter-rouge {
+	background-color: #eee;
+}
