@@ -2,26 +2,22 @@
 <html lang="{{ site.lang | default: "ja" }}">
 <head>
 <meta charset='utf-8'>
-<title>Kebu's Laboratory : {{site.title}}</title>
+<title>Kebu's Laboratory : {{page.title}}</title>
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <![endif]-->
-{% include head-article.html %}
+{% include head-main.html %}
 </head>
 
 <body>
-<header>
-<div class="inner">
-<h1 class="article-title">{{ site.title | default: site.github.repository_name }}</h1>
-</header>
+
+{% include header-main.html %}
 
 <section id="main-content">
   {{ content }}
 </section>
 
-
-<footer>
-</footer>
+{% include footer-main.html %}
 
 </body>
 </html>
