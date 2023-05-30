@@ -11,7 +11,7 @@ layout: default
 
 Scratchのプロジェクトを実行するには、プロジェクトのページで表示されている緑色の旗をクリックします。
 
-+ [リズムダンス プロジェクト](https://scratch.mit.edu/projects/375119370/)
++ [[リズムダンス プロジェクト](https://scratch.mit.edu/projects/375119370/)](https://scratch.mit.edu/projects/375119370/)
 
 ## Rocket
 実は、リズムダンスよりも作に作り始めたプロジェクトですが、機能の確認をするためにリズムダンスが先に完成した経緯があります。
