@@ -11,6 +11,12 @@ section h2 {
 	border-radius: 5px;
 }	
 
+section img {
+	margin: 8px;
+	clear: both;
+	float: right;
+}
+
 section {
 	margin: 10px auto;
 	background-color: unset;
