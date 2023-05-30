@@ -8,5 +8,11 @@ h1 {
 h2 {
 	margin: 0;
 	padding: 12px;
-  	font-size: 24px;
+	border-radius: unset;
 }	
+
+section {
+	margin: 10px;
+	background-color: unset;
+	border-radius: unset;
+}
