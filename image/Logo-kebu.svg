@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+
+<!-- 顔の輪郭 -->
+<path id="ear" style="stroke: rgb(0, 0, 0); fill: rgb(255, 227, 151); stroke-width: 5px;" d="M 77 137 C 50 120 30 160 77 202" />
+<use href="#ear"   x="-310" style="transform: scale(-1,1);"/>
+<rect x="75" y="40" width="160" height="230" rx="80" stroke="black" stroke-width="5" fill="rgb(255, 227, 151)"/>
+
+<!-- メガネ -->
+<rect x="160" y="137" width="65" height="35" rx="10" stroke="#000" stroke-width="5" fill="none"/>
+<line x1="150" y1="148" x2="160" y2="148" stroke="black" stroke-width="5"/>
+<rect x="85" y="137" width="65" height="35" rx="10" stroke="#000" stroke-width="5" fill="none"/>
+
+<!-- 眉毛 -->
+<path rx="80" stroke="black" stroke-width="8" stroke-linecap="round" d="M 172 125 C 172 120 217 120 217 125"/>
+<path rx="80" stroke="black" stroke-width="8" stroke-linecap="round" d="M 92 125 C 92 120 137 120 137 125"/>
+
+<!-- 目 -->
+<circle id="eye1" cx="117.5" cy="155" r="7" fill="black" stroke="none" />
+<circle id="eye2" cx="192.5" cy="155" r="7" fill="black" stroke="none" />
+
+<!-- 口 -->
+<path stroke="black" stroke-width="5" stroke-linecap="round"  fill="rgb(207, 0, 0)" d="M 138 223 L 143 223 C 150 223 166 223 170 225 C 174 227 167 231 163 233 L 160 235"/>
+
+<!-- 帽子 -->
+<path style="stroke: rgb(0, 0, 0);" d="M 127 46 C 127 66 185 66 185 46 C 185 31 127 31 127 46 Z"/>
+<path style="stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linecap: round; stroke-linejoin: round; fill: rgb(138, 152, 34);" d="M 72 105 L 85 62 C 101.008 11.511 209.566 10.204 224 62 L 237 105 C 240.17 111.812 219.462 127.398 207 120 C 168.545 97.17 151.086 98.138 107 120 C 94.499 128.415 68.698 112.551 72 105 Z"/>
+<path style="stroke: rgb(0, 0, 0); stroke-width: 3px; fill: none; stroke-linecap: round;" d="M 72 105 C 107 70 204 70 237 105"/>
+<text style="fill: rgb(255, 255, 255); font-family: &quot;Arial Black&quot;; font-size: 9.3px; white-space: pre;" transform="matrix(6.198005, 0, 0, 5.168402, -462.324493, -131.567139)" x="96.05" y="39.606">K</text>
+
+</svg>
