@@ -12,9 +12,6 @@ section h2 {
 }	
 
 section img {
-	margin: 8px;
-	clear: both;
-	float: right;
 }
 
 section {
@@ -34,4 +31,10 @@ section {
    
 .highlighter-rouge {
 	background-color: #eee;
+}
+
+.img-right {
+	margin: 8px;
+	clear: both;
+	float: right;
 }

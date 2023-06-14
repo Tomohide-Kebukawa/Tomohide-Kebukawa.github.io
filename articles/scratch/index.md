@@ -5,7 +5,7 @@ layout: default
 
 ## リズムダンス
 
-[![リズムダンス](./img_rhythm_dance.png)](https://scratch.mit.edu/projects/375119370/)
+![リズムダンス](./img_rhythm_dance.png)](https://scratch.mit.edu/projects/375119370/){: .img-right}
 
 最初にどのようなことができるのか、娘と二人で確認しながら作ったプロジェクトです。
 
@@ -15,7 +15,7 @@ Scratchのプロジェクトを実行するには、プロジェクトのペー�
 
 ## Rocket
 
-[![Rocket](./img_rocket.png)](https://scratch.mit.edu/projects/374562421/)
+![Rocket](./img_rocket.png)](https://scratch.mit.edu/projects/374562421/){: .img-right}
 
 実は、リズムダンスよりも作に作り始めたプロジェクトですが、機能の確認をするためにリズムダンスが先に完成した経緯があります。
 
@@ -25,7 +25,7 @@ Scratchのプロジェクトを実行するには、プロジェクトのペー�
 
 ## テトリス
 
-[![テトリス](./img_tetris.png)](https://scratch.mit.edu/projects/376766531/)
+![テトリス](./img_tetris.png)](https://scratch.mit.edu/projects/376766531/){: .img-right}
 
 Rocketに気を良くして、定番ゲームのテトリスを作成しました。
 
@@ -35,7 +35,7 @@ Rocketに気を良くして、定番ゲームのテトリスを作成しまし�
 
 ## マインスイーパー
 
-[![マインスイーパー](./img_minesweeper.png)](https://scratch.mit.edu/projects/380008753/)
+![マインスイーパー](./img_minesweeper.png)](https://scratch.mit.edu/projects/380008753/){: .img-right}
 
 テトリスに続いて、定番ゲームのマインスイーパーを作成しました。
 
@@ -47,7 +47,7 @@ Rocketに気を良くして、定番ゲームのテトリスを作成しまし�
 
 ## 一筆書き
 
-[![一筆書き](./img_onestroke_sketch.png)](https://scratch.mit.edu/projects/382329712/)
+![一筆書き](./img_onestroke_sketch.png)](https://scratch.mit.edu/projects/382329712/){: .img-right}
 
 クローンの使い方を発展させて、なにかゲームが作れないかなと考えていたときに思いついたのがこれです。
 
@@ -59,7 +59,7 @@ Rocketに気を良くして、定番ゲームのテトリスを作成しまし�
 
 ## とらんぽらん
 
-[![とらんぽらん](./img_tranporan.png)](https://scratch.mit.edu/projects/380588354/)
+![とらんぽらん](./img_tranporan.png)](https://scratch.mit.edu/projects/380588354/){: .img-right}
 
 娘がマウスのハンドリングが知りたいというので見本に作成しました。
 
@@ -70,7 +70,7 @@ Rocketに気を良くして、定番ゲームのテトリスを作成しまし�
 
 ## 数独パズル
 
-[![数独パズル](./img_numplay.png)](https://scratch.mit.edu/projects/388790895/)
+![数独パズル](./img_numplay.png)](https://scratch.mit.edu/projects/388790895/){: .img-right}
 
 娘がナンプレ本にはまり、何冊も買わされそうになってので、それを避けるために作っちゃいました。
 
@@ -80,7 +80,7 @@ Rocketに気を良くして、定番ゲームのテトリスを作成しまし�
 
 ## 都道府県クイズ
 
-[![都道府県クイズ](./img_prefectures.png)](https://scratch.mit.edu/projects/391514236/)
+![都道府県クイズ](./img_prefectures.png)](https://scratch.mit.edu/projects/391514236/){: .img-right}
 
 娘が課題になかなか取り組まないので、課題を楽しめるようにと作成しました。 とりあえず、課題を終えられたので目的達成です。
 
