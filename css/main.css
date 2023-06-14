@@ -35,18 +35,18 @@ article.index-page section {
 	width: 400px;
 }
 
-h1 {
+.site-title {
 	margin: 0;
 	padding: 24px;
 	background-image: linear-gradient(0, rgba(57, 210, 248, 1), rgba(55, 191, 222, 1) 75%, rgba(42, 175, 172, 1));
   	font-size: 32px;
 }
-h1::before {
+.site-title::before {
 	content: "💫";
 	font-size: 38px;
 	padding: 24px;
 }
-h1::after {
+.site-title::after {
 	content: "💯";
 	font-size: 38px;
 	padding: 24px;
