@@ -1,5 +1,4 @@
 User-agent: *
 Sitemap: https://tomohide-kebukawa.github.io/sitemap.xml
 
-Disallow：　/_includes/
-Disallow：　/_layouts/
+Disallow：　/_
