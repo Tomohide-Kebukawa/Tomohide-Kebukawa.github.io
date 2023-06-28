@@ -2,6 +2,8 @@
 
 このリポジトリは、[Tomohide-Kebukawa.github.io](https://Tomohide-Kebukawa.github.io)で公開しているサイトのソースです。
 
+以下はGithubを勉強中の自分のために書く備忘録的なものです。
+
 ## pages
 
 サイトは基本的にmdで記述しています。
@@ -15,3 +17,12 @@ mdファイル更新後に実行されるpagesにて、htmlにビルドしてい
 ## _layouts
 
 pagesによってビルドする際に、_layoutsフォルダにあるテンプレートを利用して、デザインを決めています。
+
+mdで書かれたページの冒頭には、どのレイアウトを使うかが記述されています。
+例えば、次のように書かれている場合は、pagesによってhtmlにビルドする際に、default.htmlのデザインでビルドされます。
+
+```
+---
+layout: default
+---
+```
