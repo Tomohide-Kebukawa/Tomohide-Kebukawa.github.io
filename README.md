@@ -1,6 +1,7 @@
 # Tomohide-Kebukawa.github.io
 
 このリポジトリは、[Tomohide-Kebukawa.github.io](https://Tomohide-Kebukawa.github.io)で公開しているサイトのソースです。
+Privateで非公開にしても、きちんとサイトは公開されるようですが、面白いのでPublicにして公開しています。
 
 以下はGithubを勉強中の自分のために書く備忘録的なものです。
 
