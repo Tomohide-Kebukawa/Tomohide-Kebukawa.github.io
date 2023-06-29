@@ -42,16 +42,16 @@ category_dir: category/
 tag_dir: tag/
 
 # collections_dir: collections/
-collections:
-  tech_notes:
-    output: true
-    permalink: /:collection/:path/
-  tech_tips:
-    output: true
-    permalink: /:collection/:path/
+# collections:
+#   tech_notes:
+#     output: true
+#     permalink: /:collection/:path/
+#   tech_tips:
+#     output: true
+#     permalink: /:collection/:path/
     
 # excerpt
-excerpt_separator: <!--more-->
+# excerpt_separator: <!--more-->
 
 # paginate
 gems: [jekyll-paginate]
