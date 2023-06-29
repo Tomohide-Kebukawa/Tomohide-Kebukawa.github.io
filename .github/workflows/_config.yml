@@ -4,6 +4,9 @@ brief-intro: Parsonal site
 # baseurl:  # the subpath of your site, e.g. /blog
 url: "https://tomohide-kebukawa.github.io/"
 
+plugins:
+  - jekyll-sitemap
+
 permalink: /:year/:month/:day/:title/
 
 # other links
