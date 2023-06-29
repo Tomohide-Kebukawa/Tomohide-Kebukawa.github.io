@@ -1,75 +1,27 @@
-# Site settings
-title: Tomohide-Kebukawa
-brief-intro: Parsonal site
-# baseurl:  # the subpath of your site, e.g. /blog
-url: "https://tomohide-kebukawa.github.io/"
+# # Site settings
+# title: Tomohide-Kebukawa
+# brief-intro: Parsonal site
+# # baseurl:  # the subpath of your site, e.g. /blog
+# url: "https://tomohide-kebukawa.github.io/"
 
-plugins:
-  - jekyll-sitemap
+# plugins:
+#   - jekyll-sitemap
 
-permalink: /:year/:month/:day/:title/
+# permalink: /:year/:month/:day/:title/
 
-# other links
-# twitter_username: 
-# facebook_username:
-# github_username:  
-# email:
-# weibo_username: 
-# zhihu_username: 
+# # sitemap
+# gems: [jekyll-sitemap]
 
-description_footer: 
-
-# comments
-# two ways to comment, only choose one, and use your own short name
-# duoshuo_shortname: 
-# disqus_shortname: 
-
-# statistic analysis
-# google_analytics_id: UA-xxxxxx
-
-# Build settings
-markdown: kramdown
-
-kramdown:
-  syntax_highlighter_opts:
-    disable : true
-
-# port
-# port: 1234
-
-# url
-category_dir: category/
-tag_dir: tag/
-
-# collections_dir: collections/
-# collections:
-#   tech_notes:
-#     output: true
-#     permalink: /:collection/:path/
-#   tech_tips:
-#     output: true
-#     permalink: /:collection/:path/
-    
-# excerpt
-# excerpt_separator: <!--more-->
-
-# paginate
-gems: [jekyll-paginate]
-paginate: 10
-
-# sitemap
-gems: [jekyll-sitemap]
-
-defaults:
-  - scope:
-      path: .github/*
-    values:
-      sitemap: false
-  - scope:
-      path: _includes/*
-    values:
-      sitemap: false
-  - scope:
-      path: _layouts/*
-    values:
-      sitemap: false
+# defaults:
+#   - scope:
+#       path: .github/*
+#     values:
+#       sitemap: false
+#   - scope:
+#       path: _includes/*
+#     values:
+#       sitemap: false
+#   - scope:
+#       path: _layouts/*
+#     values:
+#       sitemap: false
